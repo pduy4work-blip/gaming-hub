@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng điều khiển quản trị - GameHub Community</title>
+  <link rel="stylesheet" href="/css/themes.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <main class="main-wrapper">
+    <!-- Admin Protection Banner if not authorized -->
+    <div id="admin-forbidden-view" style="display: none; text-align: center; padding: 4rem 1.5rem;">
+      <div class="card" style="max-width: 500px; margin: 0 auto; color: var(--color-danger);">
+        <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Truy cập bị từ chối (403)</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Bạn không có quyền quản trị hoặc kiểm duyệt để truy cập trang này.</p>
+        <a href="/" class="btn btn-primary btn-sm">Quay về trang chủ</a>
+      </div>
+    </div>
+
+    <div id="admin-dashboard-view" style="display: none;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-primary);">Bảng điều khiển Quản trị</h1>
+          <p style="font-size: 0.9rem; color: var(--text-secondary);">Quản lý thành viên, kiểm duyệt nội dung và theo dõi hoạt động diễn đàn.</p>
+        </div>
+        <div id="admin-role-indicator"></div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+        <div class="card" style="display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background-color: var(--color-primary-subtle); color: var(--color-primary); display: flex; align-items: center; justify-content: center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <div id="stat-total-users" style="font-size: 1.6rem; font-weight: 800; color: var(--text-primary);">0</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Tổng thành viên</div>
+          </div>
+        </div>
+
+        <div class="card" style="display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background-color: var(--color-success-subtle); color: var(--color-success); display: flex; align-items: center; justify-content: center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div>
+            <div id="stat-total-posts" style="font-size: 1.6rem; font-weight: 800; color: var(--text-primary);">0</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Bài viết đã xuất bản</div>
+          </div>
+        </div>
+
+        <div class="card" style="display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background-color: var(--bg-hover); color: var(--text-primary); display: flex; align-items: center; justify-content: center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div>
+            <div id="stat-total-comments" style="font-size: 1.6rem; font-weight: 800; color: var(--text-primary);">0</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Tổng bình luận</div>
+          </div>
+        </div>
+
+        <div class="card" style="display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background-color: var(--color-danger-subtle); color: var(--color-danger); display: flex; align-items: center; justify-content: center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          </div>
+          <div>
+            <div id="stat-pending-reports" style="font-size: 1.6rem; font-weight: 800; color: var(--color-danger);">0</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Báo cáo chờ xử lý</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="feed-header" style="margin-bottom: 1.25rem;">
+        <div class="feed-tabs">
+          <button class="feed-tab active" data-tab="reports">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            Xử lý báo cáo
+          </button>
+          <button class="feed-tab" id="tab-users-btn" data-tab="users">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Quản lý người dùng
+          </button>
+          <button class="feed-tab" id="tab-games-btn" data-tab="games">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 2 18 2 18 6 6 6 6 2"/><rect x="3" y="6" width="18" height="16" rx="2"/></svg>
+            Quản lý Game
+          </button>
+          <button class="feed-tab" data-tab="logs">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            Nhật ký kiểm duyệt
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Views Container -->
+      <div id="admin-tab-content"></div>
+    </div>
+  </main>
+
+  <!-- Add Game Modal (Admin) -->
+  <div class="modal-overlay" id="add-game-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Thêm trò chơi mới</h3>
+        <button class="btn-icon" id="close-game-modal">&times;</button>
+      </div>
+      <form id="add-game-form">
+        <div class="form-group">
+          <label class="form-label">Tên trò chơi *</label>
+          <input type="text" id="game-name-input" class="form-control" placeholder="Ví dụ: Dota 2, CS:GO 2..." required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mô tả cộng đồng</label>
+          <textarea id="game-desc-input" class="form-control" rows="3" placeholder="Giới thiệu thể loại, phong cách thảo luận..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ảnh bìa (Cover Image URL)</label>
+          <input type="text" id="game-cover-input" class="form-control" placeholder="https://... URL ảnh">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancel-game-btn">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu trò chơi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+/* ===================================================================
+   GameHub Community - Responsive Layout Styles
+   Mobile & Tablet Adaptations
+   =================================================================== */
+
+/* Tablet & Smaller Desktops (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .forum-layout {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .forum-layout > .sidebar-right {
+    display: none;
+  }
+
+  .layout-content-sidebar {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile & Small Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+  .header-container {
+    height: 56px;
+    padding: 0 1rem;
+    gap: 0.75rem;
+  }
+
+  .header-nav {
+    display: none;
+  }
+
+  .header-search {
+    display: none;
+  }
+
+  .mobile-search-bar {
+    display: block;
+    padding: 0.75rem 1rem;
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .forum-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .forum-layout > .sidebar-left {
+    display: none;
+  }
+
+  /* Mobile Drawer Navigation */
+  .mobile-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    background-color: var(--bg-surface);
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    overflow-y: auto;
+  }
+
+  .mobile-drawer.open {
+    transform: translateX(0);
+  }
+
+  .drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  .drawer-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .main-wrapper {
+    margin: 1rem auto;
+    padding: 0 0.85rem;
+  }
+
+  .post-detail-container {
+    padding: 1.25rem;
+  }
+
+  .post-title-main {
+    font-size: 1.4rem;
+  }
+
+  .feed-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .feed-tabs {
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+
+  .post-card {
+    padding: 1rem;
+  }
+
+  .post-card-title {
+    font-size: 1.05rem;
+  }
+
+  .games-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .post-card-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}

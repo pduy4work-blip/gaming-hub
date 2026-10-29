@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thông báo - GameHub Community</title>
+  <link rel="stylesheet" href="/css/themes.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <main class="main-wrapper">
+    <div class="layout-single-col">
+      <div class="card">
+        <div class="card-header">
+          <h1 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Trung tâm thông báo
+          </h1>
+          <button id="mark-all-read-btn" class="btn btn-outline btn-sm">Đánh dấu tất cả đã đọc</button>
+        </div>
+
+        <div id="notifications-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="text-align: center; padding: 2.5rem;">
+            <div class="loading-spinner"></div>
+            <p style="margin-top: 0.75rem; color: var(--text-muted);">Đang tải thông báo...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = await AuthState.checkAuth();
+      if (!user) {
+        showToast('Vui lòng đăng nhập để xem thông báo.', 'error');
+        setTimeout(() => window.location.href = '/login.html', 1000);
+        return;
+      }
+
+      await loadNotifications();
+
+      document.getElementById('mark-all-read-btn').addEventListener('click', async () => {
+        try {
+          await api.put('/notifications/mark-all-read');
+          showToast('Đã đánh dấu tất cả thông báo là đã đọc.', 'success');
+          loadNotifications();
+          const badge = document.getElementById('unread-badge');
+          if (badge) badge.style.display = 'none';
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      });
+    });
+
+    async function loadNotifications() {
+      const container = document.getElementById('notifications-list');
+      try {
+        const res = await api.get('/notifications');
+        if (!res.success) throw new Error(res.error);
+
+        const list = res.data;
+        if (list.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-title">Chưa có thông báo nào</div>
+              <p>Khi có thành viên tương tác với bài viết của bạn, thông báo sẽ hiển thị ở đây.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = list.map(n => `
+          <div 
+            class="notification-item" 
+            style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.9rem 1.1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background-color: ${n.read_at ? 'var(--bg-surface)' : 'var(--color-primary-subtle)'}; cursor: pointer; transition: background 150ms;"
+            onclick="handleClickNotification(${n.id}, '${n.target_type}', ${n.target_id})"
+          >
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+              <img src="${n.actor_avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80'}" class="avatar avatar-sm" alt="">
+              <div>
+                <div style="font-size: 0.92rem; color: var(--text-primary);">${escapeHtml(n.message)}</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">${formatRelativeTime(n.created_at)}</div>
+              </div>
+            </div>
+
+            ${!n.read_at ? `<span style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-primary); display: inline-block;"></span>` : ''}
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = `<div style="text-align: center; color: var(--color-danger); padding: 2rem;">Lỗi tải thông báo.</div>`;
+      }
+    }
+
+    window.handleClickNotification = async (id, targetType, targetId) => {
+      try {
+        await api.put(`/notifications/${id}/read`);
+      } catch (e) {
+        console.error(e);
+      }
+
+      if (targetType === 'post' || targetType === 'comment') {
+        // Fetch post slug if needed or direct
+        try {
+          const res = await api.get(`/posts?limit=100`);
+          const target = res.data.find(p => p.id === targetId);
+          if (target) {
+            window.location.href = `/post.html?slug=${target.slug}`;
+            return;
+          }
+        } catch (e) {}
+      }
+      window.location.href = '/';
+    };
+  </script>
+</body>
+</html>

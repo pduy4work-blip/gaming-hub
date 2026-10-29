@@ -1,0 +1,27 @@
+{
+  "name": "gamehub-community",
+  "version": "1.0.0",
+  "description": "Full-stack Gaming Community Forum built with HTML5, CSS3, Vanilla JS, Express.js and SQLite",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/database/seed.js",
+    "test": "node tests/run.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.1",
+    "multer": "^1.4.5-lts.1"
+  },
+  "keywords": [
+    "gaming",
+    "forum",
+    "community",
+    "express",
+    "vanillajs",
+    "sqlite"
+  ],
+  "author": "GameHub Team",
+  "license": "MIT"
+}

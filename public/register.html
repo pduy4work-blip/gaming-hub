@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký tài khoản - GameHub Community</title>
+  <link rel="stylesheet" href="/css/themes.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <main class="main-wrapper">
+    <div class="form-card">
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem;">Đăng ký thành viên</h1>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">Gia nhập cộng đồng game thủ GameHub hoàn toàn miễn phí</p>
+      </div>
+
+      <form id="register-form">
+        <div class="form-group">
+          <label class="form-label" for="reg-username">Tên đăng nhập (Username) *</label>
+          <input type="text" id="reg-username" class="form-control" placeholder="3-20 ký tự, chỉ chữ cái, số, _" required autocomplete="username">
+          <span style="font-size: 0.78rem; color: var(--text-muted);">Dùng để đăng nhập và định danh tài khoản.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-display-name">Tên hiển thị (Tùy chọn)</label>
+          <input type="text" id="reg-display-name" class="form-control" placeholder="Tên hoặc biệt danh bạn muốn hiển thị...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Địa chỉ Email *</label>
+          <input type="email" id="reg-email" class="form-control" placeholder="vidu@email.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="form-label" for="reg-password">Mật khẩu *</label>
+            <span style="font-size: 0.8rem; color: var(--text-muted); cursor: pointer;" onclick="togglePasswordVisibility('reg-password')">Hiện / Ẩn</span>
+          </div>
+          <input type="password" id="reg-password" class="form-control" placeholder="Tối thiểu 6 ký tự" required autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-confirm-password">Xác nhận mật khẩu *</label>
+          <input type="password" id="reg-confirm-password" class="form-control" placeholder="Nhập lại mật khẩu..." required autocomplete="new-password">
+        </div>
+
+        <div id="register-error" class="form-error" style="display: none; margin-bottom: 1rem; text-align: center;"></div>
+
+        <button type="submit" id="register-submit-btn" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.5rem;">
+          Đăng ký tài khoản
+        </button>
+
+        <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
+          Đã có tài khoản? <a href="/login.html" style="font-weight: 600;">Đăng nhập ngay</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>

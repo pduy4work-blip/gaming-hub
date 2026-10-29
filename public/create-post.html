@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tạo bài viết mới - GameHub Community</title>
+  <link rel="stylesheet" href="/css/themes.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <main class="main-wrapper">
+    <div class="layout-single-col">
+      <div class="card">
+        <div class="card-header">
+          <h1 class="card-title" id="page-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tạo bài viết mới
+          </h1>
+        </div>
+
+        <form id="post-form">
+          <div class="form-group">
+            <label class="form-label" for="post-title-input">Tiêu đề bài viết *</label>
+            <input type="text" id="post-title-input" class="form-control" placeholder="Ví dụ: Hướng dẫn mẹo chơi game hoặc chiến thuật mới..." required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="post-game-select">Cộng đồng Game</label>
+            <select id="post-game-select" class="form-control">
+              <option value="">-- Chọn cộng đồng game liên quan (tùy chọn) --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="post-excerpt-input">Đoạn trích ngắn (tùy chọn)</label>
+            <input type="text" id="post-excerpt-input" class="form-control" placeholder="Tóm tắt ngắn nội dung bài viết hiển thị ở trang chủ...">
+          </div>
+
+          <!-- Editor Toolbar -->
+          <div class="form-group">
+            <label class="form-label">Nội dung bài viết *</label>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; background-color: var(--bg-surface-elevated); border: 1px solid var(--border-color); border-bottom: none; border-radius: var(--radius-sm) var(--radius-sm) 0 0; padding: 0.4rem 0.6rem;">
+              <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                <button type="button" class="btn-icon btn-sm" onclick="insertTag('b')" title="In đậm (Bold)"><strong>B</strong></button>
+                <button type="button" class="btn-icon btn-sm" onclick="insertTag('i')" title="In nghiêng (Italic)"><em>I</em></button>
+                <button type="button" class="btn-icon btn-sm" onclick="insertTag('h3')" title="Tiêu đề (H3)">H3</button>
+                <button type="button" class="btn-icon btn-sm" onclick="insertTag('blockquote')" title="Trích dẫn (Quote)">&ldquo;</button>
+                <button type="button" class="btn-icon btn-sm" onclick="insertCodeBlock()" title="Khối mã (Code)">&lt;/&gt;</button>
+                <button type="button" class="btn-icon btn-sm" onclick="insertLink()" title="Chèn liên kết">🔗</button>
+                
+                <!-- Image Upload Button -->
+                <label class="btn-icon btn-sm" title="Tải ảnh lên bài viết" style="cursor: pointer; margin-bottom: 0;">
+                  🖼️
+                  <input type="file" id="image-upload-input" accept="image/*" style="display: none;">
+                </label>
+              </div>
+
+              <!-- Edit / Preview Tabs -->
+              <div style="display: flex; gap: 0.25rem;">
+                <button type="button" id="tab-write-btn" class="btn btn-sm btn-secondary active">Soạn thảo</button>
+                <button type="button" id="tab-preview-btn" class="btn btn-sm btn-ghost">Xem trước</button>
+              </div>
+            </div>
+
+            <!-- Write Textarea -->
+            <textarea id="post-content-input" class="form-control" style="border-radius: 0 0 var(--radius-sm) var(--radius-sm); min-height: 280px; font-family: var(--font-family);" placeholder="Viết nội dung bài thảo luận tại đây..." required></textarea>
+
+            <!-- Preview Pane -->
+            <div id="post-preview-pane" class="post-body" style="display: none; background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0 0 var(--radius-sm) var(--radius-sm); padding: 1.25rem; min-height: 280px;"></div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+            <a href="/" class="btn btn-secondary">Hủy bỏ</a>
+            <button type="button" id="save-draft-btn" class="btn btn-outline">Lưu bản nháp</button>
+            <button type="submit" id="publish-btn" class="btn btn-primary">Xuất bản bài viết</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    let editPostId = null;
+    let isDirty = false;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Require auth to access create page
+      const user = await AuthState.checkAuth();
+      if (!user) {
+        showToast('Vui lòng đăng nhập để tạo bài viết.', 'error');
+        setTimeout(() => window.location.href = '/login.html', 1000);
+        return;
+      }
+
+      await loadGamesDropdown();
+
+      // Check edit mode
+      const urlParams = new URLSearchParams(window.location.search);
+      const editId = urlParams.get('edit');
+      if (editId) {
+        editPostId = editId;
+        document.getElementById('page-title').innerHTML = 'Chỉnh sửa bài viết';
+        document.getElementById('publish-btn').textContent = 'Cập nhật bài viết';
+        loadPostForEdit(editId);
+      }
+
+      // Track unsaved changes
+      document.getElementById('post-form').addEventListener('input', () => { isDirty = true; });
+      window.addEventListener('beforeunload', (e) => {
+        if (isDirty) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+
+      // Preview Tab Toggle
+      const writeTab = document.getElementById('tab-write-btn');
+      const previewTab = document.getElementById('tab-preview-btn');
+      const contentInput = document.getElementById('post-content-input');
+      const previewPane = document.getElementById('post-preview-pane');
+
+      writeTab.addEventListener('click', () => {
+        writeTab.className = 'btn btn-sm btn-secondary active';
+        previewTab.className = 'btn btn-sm btn-ghost';
+        contentInput.style.display = 'block';
+        previewPane.style.display = 'none';
+      });
+
+      previewTab.addEventListener('click', () => {
+        previewTab.className = 'btn btn-sm btn-secondary active';
+        writeTab.className = 'btn btn-sm btn-ghost';
+        contentInput.style.display = 'none';
+        previewPane.style.display = 'block';
+        previewPane.innerHTML = contentInput.value.trim() || '<p style="color: var(--text-muted);">Chưa có nội dung để xem trước.</p>';
+      });
+
+      // Image Upload file input
+      document.getElementById('image-upload-input').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        showToast('Đang tải ảnh lên...', 'info');
+        try {
+          const res = await api.upload(file);
+          if (res.success) {
+            insertText(`\n<img src="${res.url}" alt="Hình ảnh">\n`);
+            showToast('Tải ảnh thành công!', 'success');
+          }
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      });
+
+      // Form Submit (Publish)
+      document.getElementById('post-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        savePost('published');
+      });
+
+      // Save Draft
+      document.getElementById('save-draft-btn').addEventListener('click', () => {
+        savePost('draft');
+      });
+    });
+
+    async function loadGamesDropdown() {
+      try {
+        const res = await api.get('/games');
+        if (res.success) {
+          const select = document.getElementById('post-game-select');
+          res.data.forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g.id;
+            opt.textContent = g.name;
+            select.appendChild(opt);
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function loadPostForEdit(id) {
+      try {
+        const res = await api.get(`/posts?limit=100`);
+        const post = res.data.find(p => String(p.id) === String(id));
+        if (post) {
+          // Fetch full post
+          const fullRes = await api.get(`/posts/${post.slug}`);
+          const p = fullRes.data;
+          document.getElementById('post-title-input').value = p.title;
+          document.getElementById('post-excerpt-input').value = p.excerpt || '';
+          document.getElementById('post-content-input').value = p.content;
+          if (p.game_id) {
+            document.getElementById('post-game-select').value = p.game_id;
+          }
+        }
+      } catch (err) {
+        showToast('Không thể tải bài viết để chỉnh sửa.', 'error');
+      }
+    }
+
+    async function savePost(status) {
+      const title = document.getElementById('post-title-input').value.trim();
+      const content = document.getElementById('post-content-input').value.trim();
+      const gameId = document.getElementById('post-game-select').value;
+      const excerpt = document.getElementById('post-excerpt-input').value.trim();
+
+      if (!title || !content) {
+        showToast('Vui lòng nhập tiêu đề và nội dung.', 'error');
+        return;
+      }
+
+      const body = {
+        title,
+        content,
+        gameId: gameId ? parseInt(gameId, 10) : null,
+        excerpt,
+        status
+      };
+
+      try {
+        let res;
+        if (editPostId) {
+          res = await api.put(`/posts/${editPostId}`, body);
+        } else {
+          res = await api.post('/posts', body);
+        }
+
+        if (res.success) {
+          isDirty = false;
+          showToast(res.message, 'success');
+          setTimeout(() => {
+            window.location.href = `/post.html?slug=${res.data.slug}`;
+          }, 1000);
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Formatting Toolbar Helpers
+    function insertTag(tag) {
+      const textarea = document.getElementById('post-content-input');
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selectedText = textarea.value.substring(start, end);
+      const replacement = `<${tag}>${selectedText || 'Văn bản'}</${tag}>`;
+      textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+      textarea.focus();
+      textarea.setSelectionRange(start + tag.length + 2, start + tag.length + 2 + (selectedText ? selectedText.length : 7));
+    }
+
+    function insertCodeBlock() {
+      insertText('\n<pre><code>// Nhập mã nguồn vào đây</code></pre>\n');
+    }
+
+    function insertLink() {
+      const url = prompt('Nhập địa chỉ URL liên kết (https://...):');
+      if (url) {
+        const textarea = document.getElementById('post-content-input');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value.substring(start, end) || 'Xem liên kết';
+        insertText(`<a href="${url}">${text}</a>`);
+      }
+    }
+
+    function insertText(text) {
+      const textarea = document.getElementById('post-content-input');
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
+      textarea.focus();
+      textarea.setSelectionRange(start + text.length, start + text.length);
+    }
+  </script>
+</body>
+</html>

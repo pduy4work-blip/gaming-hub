@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập - GameHub Community</title>
+  <link rel="stylesheet" href="/css/themes.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <main class="main-wrapper">
+    <div class="form-card">
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem;">Đăng nhập</h1>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">Chào mừng bạn trở lại với GameHub Community</p>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-username">Tên đăng nhập hoặc Email</label>
+          <input type="text" id="login-username" class="form-control" placeholder="Nhập username hoặc email..." required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="form-label" for="login-password">Mật khẩu</label>
+            <span style="font-size: 0.8rem; color: var(--text-muted); cursor: pointer;" onclick="togglePasswordVisibility('login-password')">Hiện / Ẩn</span>
+          </div>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <div id="login-error" class="form-error" style="display: none; margin-bottom: 1rem; text-align: center;"></div>
+
+        <button type="submit" id="login-submit-btn" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.5rem;">
+          Đăng nhập ngay
+        </button>
+
+        <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
+          Chưa có tài khoản? <a href="/register.html" style="font-weight: 600;">Đăng ký thành viên mới</a>
+        </div>
+      </form>
+
+      <!-- Demo Accounts Info Box -->
+      <div style="margin-top: 1.75rem; padding: 0.85rem 1rem; background-color: var(--bg-surface-elevated); border: 1px dashed var(--border-color); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--text-secondary);">
+        <div style="font-weight: 700; margin-bottom: 0.35rem; color: var(--text-primary);">Tài khoản mẫu để thử nghiệm:</div>
+        <div>👑 Admin: <code>admin</code> / <code>Admin@123456</code></div>
+        <div>🛡️ Moderator: <code>mod_gamer</code> / <code>Mod@123456</code></div>
+        <div>🎮 Member: <code>pro_ninja</code> / <code>Ninja@123456</code></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>
